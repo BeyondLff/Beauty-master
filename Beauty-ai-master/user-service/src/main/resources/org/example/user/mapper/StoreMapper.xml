@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.user.mapper.StoreMapper">
+    <select id="searchStores" resultMap="StoreResultMap">
+        SELECT s.id, s.store_name, s.address_province, s.address_city,
+        s.address_detail, s.status, s.contact, s.owner_id, u.username AS owner_name
+        FROM beauty_schema.stores AS s
+        LEFT JOIN beauty_schema.users AS u ON s.owner_id = u.id
+        <where>
+            <!-- Add your conditions here -->
+            <if test="storeName != null and storeName.trim() neq ''">
+                AND s.store_name LIKE CONCAT('%', #{storeName}, '%')
+            </if>
+            <if test="addressProvince != null and addressProvince.trim() neq ''">
+                AND s.address_province LIKE CONCAT('%',#{addressProvince},'%')
+            </if>
+            <if test="addressCity != null and addressCity.trim() neq ''">
+                AND s.address_city LIKE CONCAT('%',#{addressCity},'%')
+            </if>
+            <if test="addressDetail != null and addressDetail.trim() neq ''">
+                AND s.address_detail LIKE CONCAT('%', #{addressDetail}, '%')
+            </if>
+            <if test="status != null">
+                AND s.status = #{status}
+            </if>
+            <if test="contact != null and contact.trim() neq ''">
+                AND s.contact LIKE CONCAT('%', #{contact}, '%')
+            </if>
+            <if test="ownerName != null and ownerName.trim() neq ''">
+                AND u.username LIKE CONCAT('%', #{ownerName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="StoreResultMap" type="org.example.user.entity.Store">
+        <result property="id" column="id"/>
+        <result property="storeName" column="store_name"/>
+        <result property="addressProvince" column="address_province"/>
+        <result property="addressCity" column="address_city"/>
+        <result property="addressDetail" column="address_detail"/>
+        <result property="status" column="status"/>
+        <result property="contact" column="contact"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="ownerName" column="owner_name"/>
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.user.mapper.StoreProductInventoryMapper">
+
+    <sql id="productByStoreIdSql">
+        p.product_id id,p.name productName,c.id categoryId,c.category_name tag,
+        p.image image,p.price price,p.description description
+    </sql>
+    <select id="listAllByStoreId" resultType="org.example.user.response.ListResponse"
+            parameterType="java.lang.Integer">
+        select id,image,name,brandname,price,stock,status,discount_price,image
+        from store_product_inventory
+        where store_id=#{storeId}
+    </select>
+    <select id="listAllByStoreIdWithNoPage" resultType="org.example.user.entity.Product">
+        select <include refid="productByStoreIdSql"/>
+        from products p
+        left join product_category pc on p.product_id = pc.product_id
+        left join category c on c.id = pc.category_id
+        left join store_product_inventory spi on p.product_id = spi.product_id
+        where spi.store_id = #{storeIdByUserId}
+    </select>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.user.mapper.UserMapper">
+    <update id="modifyUserInfo">
+        update users
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number=#{phoneNumber},
+            </if>
+            <if test="role != null">
+                role=#{role},
+            </if>
+            <if test="password != null">
+                password=#{password}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="searchUserInfo" resultType="org.example.user.response.UserResponse">
+        SELECT
+        u.id,
+        u.account,
+        u.username,
+        u.phone_number AS phoneNumber,
+        r.name AS role,
+        u.status,
+        s.store_name AS storeName
+        FROM
+        beauty_schema.users u
+        LEFT JOIN
+        beauty_schema.user_role ur ON u.id = ur.user_id
+        LEFT JOIN
+        beauty_schema.role r ON ur.role_id = r.id
+        LEFT JOIN
+        beauty_schema.stores s ON u.stores_id = s.id
+        WHERE
+        <if test="account != null">
+            u.account = #{account} AND
+        </if>
+        <if test="username != null">
+            u.username LIKE CONCAT('%', #{username}, '%') AND
+        </if>
+        <if test="phoneNumber != null">
+            u.phone_number LIKE CONCAT('%', #{phoneNumber}, '%') AND
+        </if>
+        <if test="roleId != null">
+            r.id = #{roleId} AND
+        </if>
+        <if test="storeName != null">
+            s.store_name LIKE CONCAT('%', #{storeName}, '%') AND
+        </if>
+        <if test="status != null">
+            u.status = #{status} AND
+        </if>
+        1=1 <!-- 默认条件，始终为真，保证 WHERE 子句有效 -->
+        ORDER BY
+        u.id;
+    </select>
+
+
+    <update id="updateUser">
+        update users
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="phoneNumber!=null">
+                phone_number=#{phoneNumber},
+            </if>
+            <if test="storesId!=null">
+                stores_id=#{storesId},
+            </if>
+            <if test="status!=null">
+                status=status,
+            </if>
+            <if test="idcard!=null">
+                idcard=#{idcard},
+            </if>
+            <if test="homeAddress!=null">
+                home_address=#{homeAddress},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>
